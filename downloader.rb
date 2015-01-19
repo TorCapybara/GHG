@@ -45,7 +45,7 @@ class Downloader
       end
       puts 'File saved: ' + File.join(@folder, filename).to_s
     end
-  rescue Net::ReadTimeout, Errno::ECONNRESET => e
+  rescue Net::ReadTimeout, Errno::ECONNRESET, EOFError => e
     puts "Connection failed: #{tries-1} tries left"
     sleep 2
     retry unless (tries -= 1).zero?
