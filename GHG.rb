@@ -3,9 +3,9 @@ require_relative 'downloader'
 require 'optparse' 
 require 'pp'
 
-version = 'v1.0'
+version = 'v1.1'
 
-options = {}
+options = { retries: 5 }
 
 optparse = OptionParser.new do|opts| 
   # assumed to have this option. 
@@ -17,6 +17,9 @@ optparse = OptionParser.new do|opts|
   opts.on( '-h', '--help', 'Display this screen' ) do 
     puts opts.help();
     exit 0 
+  end 
+  opts.on( '-r [NUMBER]', '--retries [NUMER]', 'Retry n times if download failed. Default: 5' ) do |retries|
+    options[:retries] = retries.to_i
   end 
   opts.on( '-v', '--version', 'Version' ) do 
     puts 'GHGgrabber - version ' + version + ' by Capybara (2015)'
@@ -54,7 +57,11 @@ unless options[:folder]
   exit 1
 end
 
-dl = Downloader.new ARGV.first, options[:folder]
-dl.parse
-dl.iterate
+dl = Downloader.new ARGV.first, options[:folder], options[:retries]
+if dl.parse
+  dl.iterate
+else
+  puts 'Cannot grab: Cannot parse document. (Network problem? Invalid URL?)'
+  exit 1
+end
 

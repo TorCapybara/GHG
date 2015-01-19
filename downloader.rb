@@ -4,13 +4,22 @@ require 'uri'
 
 class Downloader
 
-  def initialize uri, folder
+  def initialize uri, folder, retries
     @uri =  URI.parse(uri)
     @folder = folder
+    @retries = retries
   end
 
   def parse
+    tries ||= @retries
     @doc = Nokogiri::HTML(open(@uri))
+  rescue Net::ReadTimeout, Errno::ECONNRESET, EOFError => e
+    puts "Connection failed: #{tries} tries left"
+    sleep 2
+    retry unless (tries -= 1).zero?
+    return false
+  else
+    return true
   end
 
   def iterate
@@ -23,6 +32,7 @@ class Downloader
 
 
   def download file_url, filename
+    tries ||= @retries
     Dir.mkdir(@folder) unless Dir.exists? @folder
     if File.exists? File.join(@folder, filename)
       puts 'File skipped: ' + File.join(@folder, filename).to_s
@@ -34,5 +44,13 @@ class Downloader
       end
       puts 'File saved: ' + File.join(@folder, filename).to_s
     end
+  rescue Net::ReadTimeout, Errno::ECONNRESET => e
+    puts "Connection failed: #{tries} tries left"
+    sleep 2
+    retry unless (tries -= 1).zero?
+    puts 'File download failed: ' + File.join(@folder, filename).to_s
+    return false
+  else
+    return true
   end
 end
