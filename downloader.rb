@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'nokogiri'
 require 'open-uri'
 require 'uri'
@@ -33,7 +34,7 @@ class Downloader
 
   def download file_url, filename
     tries ||= @retries
-    Dir.mkdir(@folder) unless Dir.exists? @folder
+    FileUtils.mkdir_p(@folder) unless Dir.exists? @folder
     if File.exists? File.join(@folder, filename)
       puts 'File skipped: ' + File.join(@folder, filename).to_s
     else

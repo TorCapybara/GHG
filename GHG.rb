@@ -3,7 +3,7 @@ require_relative 'downloader'
 require 'optparse' 
 require 'pp'
 
-version = 'v1.1'
+version = 'v1.2'
 
 options = { retries: 5 }
 
