@@ -2,13 +2,16 @@ require 'fileutils'
 require 'nokogiri'
 require 'open-uri'
 require 'uri'
+require 'open3'
 
 class Downloader
 
-  def initialize uri, folder, retries
+  def initialize uri, options
     @uri =  URI.parse(uri)
-    @folder = folder
-    @retries = retries
+    @folder = options[:folder]
+    @retries = options[:retries]
+    @has_jpeginfo = jpeginfo_installed
+    @retry_corrupt = options[:retry_corrupt]
   end
 
   def parse
@@ -31,14 +34,18 @@ class Downloader
     end
   end
 
-
   def download file_url, filename
     tries ||= @retries
+    path = File.join(@folder, filename).to_s
     FileUtils.mkdir_p(@folder) unless Dir.exists? @folder
-    if File.exists? File.join(@folder, filename)
+    if @retry_corrupt and File.exists?(path) and file_corrupt?(path)
+      FileUtils.rm path
+      puts 'Corrupted file removed: ' + path
+    end
+    if File.exists? path
       puts 'File skipped: ' + File.join(@folder, filename).to_s
     else
-      File.open(File.join(@folder, filename), "wb") do |saved_file|
+      File.open(path, "wb") do |saved_file|
         open(file_url, "rb") do |read_file|
           saved_file.write(read_file.read)
         end
@@ -49,9 +56,28 @@ class Downloader
     puts "Connection failed: #{tries-1} tries left"
     sleep 2
     retry unless (tries -= 1).zero?
-    puts 'File download failed: ' + File.join(@folder, filename).to_s
+    puts 'File download failed: ' + path
+    FileUtils.rm path
     return false
   else
     return true
+  end
+
+  def jpeginfo_installed
+    Open3.popen3('jpeginfo --version')
+    true
+  rescue  Errno::ENOENT
+    false
+  end
+
+  def file_corrupt? filename
+    if File.size(filename) == 0
+      return true
+    end
+    if @has_jpeginfo
+      `jpeginfo -c '#{filename}'`
+      return ($? != 0)
+    end
+    false
   end
 end

@@ -3,9 +3,9 @@ require_relative 'downloader'
 require 'optparse' 
 require 'pp'
 
-version = 'v1.2'
+version = 'v1.3'
 
-options = { retries: 5 }
+options = { retries: 5, retry_corrupt: false }
 
 optparse = OptionParser.new do|opts| 
   # assumed to have this option. 
@@ -13,6 +13,9 @@ optparse = OptionParser.new do|opts|
   opts.separator ''
   opts.on( '-f [FOLDER]', '--folder [FOLDER]', 'save images to this folder (mandatory)' ) do |folder|
     options[:folder] = folder
+  end 
+  opts.on( '-c', '--corruption-check', 'Checks if files are corrupted from last run and retries those files' ) do
+    options[:retry_corrupt] = true
   end 
   opts.on( '-h', '--help', 'Display this screen' ) do 
     puts opts.help();
@@ -57,7 +60,7 @@ unless options[:folder]
   exit 1
 end
 
-dl = Downloader.new ARGV.first, options[:folder], options[:retries]
+dl = Downloader.new ARGV.first, options
 if dl.parse
   dl.iterate
 else
