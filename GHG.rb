@@ -1,14 +1,19 @@
 #!/usr/bin/env ruby
 require_relative 'downloader'
 require 'optparse' 
-require 'pp'
+require 'yaml'
 
-version = 'v1.3'
+version = 'v1.4'
 
-options = { retries: 5, retry_corrupt: false }
+# Load config files
+config_file, config = File.expand_path('../config.yml', __FILE__), {}
+config = YAML.load_file(config_file) if File.exists?(config_file)
 
+# Configuration can Override options
+options = { retries: 5, retry_corrupt: false, use_proxy: false }.merge(config)
+
+# Command Line Parameters
 optparse = OptionParser.new do|opts| 
-  # assumed to have this option. 
   opts.separator 'GHGrabber ' + version
   opts.separator ''
   opts.on( '-f [FOLDER]', '--folder [FOLDER]', 'save images to this folder (mandatory)' ) do |folder|
@@ -38,6 +43,7 @@ optparse = OptionParser.new do|opts|
   opts.separator ''
 end
 
+
 if ARGV.count == 0
   puts optparse.summarize
   exit 0
@@ -60,11 +66,17 @@ unless options[:folder]
   exit 1
 end
 
+if options[:use_proxy]
+  require 'socksify'
+  TCPSocket::socks_server = options[:proxy][:server]
+  TCPSocket::socks_port = options[:proxy][:port]
+end
+
 dl = Downloader.new ARGV.first, options
 if dl.parse
   dl.iterate
 else
-  puts 'Cannot grab: Cannot parse document. (Network problem? Invalid URL?)'
+  puts 'Cannot grab: Cannot parse document. (Network problem? Invalid URL? Wrong Proxy Settings?)'
   exit 1
 end
 

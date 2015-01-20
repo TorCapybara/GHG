@@ -18,6 +18,10 @@ install the nokogiri gem
 
     gem install nokogiri
 
+if you run no transparent proxy you need to install the socksify gem too (Not needed for Tails or Whonix)
+
+    gem install socksify
+
 To have a better jpeg corruption check install jpeginfo (OPTIONAL)
 
     apt-get install jpeginfo
@@ -53,9 +57,17 @@ Prepare on Tails
 Install instructions
 --------------------
 
-Just clone repository and it should be ready to run, please run it locally "./GHG.rb" it is not tested for a global installation.
+Download the zip file and decompress it or clone the repository and it should be ready to run.
 
-    git clone https://github.com/TorCapybara/GHG.git
+    https://github.com/TorCapybara/GHG/archive/master.zip
+
+Edit the config file if necessary.
+
+    nano config.yml
+
+* For Tor Browser Bundle: works as is
+* As a standard Tor installation: Change port to 9050
+* For Transparent Proxy (Tails, Whonix): use_proxy: false
 
 
 Run GHG
@@ -73,9 +85,17 @@ Update with corruption check
 
     ./GHG.rb http://domain.tld/thread/1.html -cf folder
 
+Operating Systems
+-----------------
+
+Should work on any platform supported by Ruby, and was sucessfully tested on:
+Windows, Linux (Whonix, Tails, Ubuntu, Debian)
 
 Versions
 -------
+
+1.4
+* Supports Tor without a Transparent Proxy (Added config file with proxy settings)
 
 1.3
 * Remove files if download failed (empty file proble)

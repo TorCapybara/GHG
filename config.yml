@@ -1,0 +1,13 @@
+# YAML configuration file
+#
+# Standard Configuration assumes Tor Browser Bundle running Tor on Port 9150 on localhost. 
+# Tor usually runs on Port 9050. Deleting this file will set the same settings, but assumes a transproxy.
+#
+# Config: Tor Browser Bundle
+#
+:use_proxy: true
+:proxy:
+  :server: localhost
+  :port: 9150
+:retries: 5
+:retry_corrupt: false
