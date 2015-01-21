@@ -94,6 +94,9 @@ Windows, Linux (Whonix, Tails, Ubuntu, Debian)
 Versions
 -------
 
+1.5
+* Fix for Ruby 1.9.3 and before, and fix abort on Socks errors
+
 1.4
 * Supports Tor without a Transparent Proxy (Added config file with proxy settings)
 

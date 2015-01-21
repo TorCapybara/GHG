@@ -17,8 +17,9 @@ class Downloader
   def parse
     tries ||= @retries
     @doc = Nokogiri::HTML(open(@uri))
-  rescue Net::ReadTimeout, Errno::ECONNRESET, EOFError => e
-    puts "Connection failed: #{tries-1} tries left"
+  rescue Exception => e
+    puts 'WARNING: ' + e.message
+    puts "Parse failed: #{tries-1} tries left"
     sleep 2
     retry unless (tries -= 1).zero?
     return false
@@ -52,8 +53,9 @@ class Downloader
       end
       puts 'File saved: ' + File.join(@folder, filename).to_s
     end
-  rescue Net::ReadTimeout, Errno::ECONNRESET, EOFError => e
-    puts "Connection failed: #{tries-1} tries left"
+  rescue Exception => e
+    puts 'WARNING: ' + e.message
+    puts "Download failed: #{tries-1} tries left"
     sleep 2
     retry unless (tries -= 1).zero?
     puts 'File download failed: ' + path
