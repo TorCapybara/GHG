@@ -3,7 +3,7 @@ require_relative 'downloader'
 require 'optparse' 
 require 'yaml'
 
-version = 'v1.5'
+version = 'v1.6'
 
 # Load config files
 config_file, config = File.expand_path('../config.yml', __FILE__), {}

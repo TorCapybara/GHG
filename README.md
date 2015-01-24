@@ -94,6 +94,9 @@ Windows, Linux (Whonix, Tails, Ubuntu, Debian)
 Versions
 -------
 
+1.6
+* Try to convert html-entities correctly: filenames like "some &amp; other" will be converted to "some & other"
+
 1.5
 * Fix for Ruby 1.9.3 and before, and fix abort on Socks errors
 

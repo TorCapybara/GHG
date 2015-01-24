@@ -3,6 +3,7 @@ require 'nokogiri'
 require 'open-uri'
 require 'uri'
 require 'open3'
+require 'cgi'
 
 class Downloader
 
@@ -30,7 +31,8 @@ class Downloader
   def iterate
     @doc.css('.fileinfo').each do |info|
       download_url = info.css('a').first.attributes['href'].value
-      filename =  info.css('.postfilename').first.children.first.to_s
+      filename_html =  info.css('.postfilename').first.children.first.to_s
+      filename = CGI.unescapeHTML(filename_html)
       download(URI.join(@uri.scheme + '://' +  @uri.host, download_url), filename)
     end
   end
