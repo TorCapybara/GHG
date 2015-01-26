@@ -11,3 +11,5 @@
   :port: 9150
 :retries: 5
 :retry_corrupt: false
+:username: username
+:password: password

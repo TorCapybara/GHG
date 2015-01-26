@@ -22,6 +22,10 @@ if you run no transparent proxy you need to install the socksify gem too (Not ne
 
     gem install socksify
 
+If you want to upload you will also need to install the rest-client gem (OPTIONAL, only needed for posting/upload)
+
+    gem install rest-client 
+
 To have a better jpeg corruption check install jpeginfo (OPTIONAL)
 
     apt-get install jpeginfo
@@ -68,6 +72,7 @@ Edit the config file if necessary.
 * For Tor Browser Bundle: works as is
 * As a standard Tor installation: Change port to 9050
 * For Transparent Proxy (Tails, Whonix): use_proxy: false
+* For upload, you can configure username and password permanently.
 
 
 Run GHG
@@ -85,6 +90,10 @@ Update with corruption check
 
     ./GHG.rb http://domain.tld/thread/1.html -cf folder
 
+Upload folder of images
+
+    ./GHG.rb http://domain.tld/thread/1.html -u "Image Set" -n username -p password -f folder
+
 Operating Systems
 -----------------
 
@@ -93,6 +102,9 @@ Windows, Linux (Whonix, Tails, Ubuntu, Debian)
 
 Versions
 -------
+
+2.0
+* GHGrabber has been extended to be a batch uploader too.
 
 1.6
 * Try to convert html-entities correctly: filenames like "some &amp; other" will be converted to "some & other"
